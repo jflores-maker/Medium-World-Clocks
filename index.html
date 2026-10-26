@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Clock — Live Analog Clocks</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #000000;
+    --panel: #000000;
+    --line: rgba(255,255,255,.12);
+    --text: #f4f7ff;
+    --muted: #aab6d1;
+    --accent: #76e4d2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #000000;
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 20px 20px 28px;
+  }
+  header { max-width: 1180px; margin: 0 auto 28px; text-align: center; }
+  .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .2em; font-size: .75rem; font-weight: 800; }\n  .live-dot { display:inline-block; width:8px; height:8px; margin-right:8px; border-radius:50%; background:#76e4d2; box-shadow:0 0 10px #76e4d2; vertical-align:middle; }
+  h1 { margin: 10px 0 8px; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.045em; }
+  header p { margin: 0; color: var(--muted); font-size: 1rem; }
+  .grid {
+    width: 100%; max-width: 1500px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .clock-card {
+    min-width: 0; background: #000000;
+    border: 1px solid var(--line); border-radius: 18px;
+    padding: 9px 5px 9px; text-align: center;
+    box-shadow: 0 18px 48px rgba(0,0,0,.2);
+    overflow: hidden;
+  }
+  .city { font-size: clamp(.85rem, 1.4vw, 1.15rem); font-weight: 750; letter-spacing: -.02em; }
+  .country { color: var(--muted); font-size: clamp(.65rem, .9vw, .8rem); margin-top: 3px; }
+  .clock {
+    display: block; width: min(100%, 108.75px); aspect-ratio: 1;
+    margin: 12px auto 10px; filter: drop-shadow(0 10px 20px rgba(0,0,0,.22));
+  }
+  .zone { max-width: 100%; overflow-wrap: anywhere; padding: 5px 6px; font-size: .65rem; }
+  .digital { font-size: clamp(.8rem, 1.4vw, 1.2rem); font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: .01em; }
+  .date { color: var(--muted); margin-top: 5px; font-size: clamp(.65rem, .8vw, .8rem); }
+  .digital { font-size: 1rem; font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: .04em; }
+  .date { color: var(--muted); margin-top: 5px; font-size: .72rem; }
+  .zone {
+    display: inline-block; margin-top: 13px; padding: 6px 10px; border: 1px solid var(--line);
+    border-radius: 999px; color: #d7e5fa; font-size: .62rem; letter-spacing: .01em;
+  }
+  footer { max-width: 1180px; margin: 24px auto 0; color: var(--muted); text-align: center; font-size: .82rem; }
+  @media (max-width: 900px) {
+    body { padding: 14px 10px 22px; overflow-x: auto; }
+    .grid { width: 850px; max-width: none; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .clock-card { padding: 8px 4px; }
+    .clock { width: min(100%, 93.75px); }
+    .digital { font-size: .78rem; }
+    .date { font-size: .68rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+
+<main class="grid" id="clocks">
+  <section class="clock-card" data-zone="America/New_York" data-city="Washington, DC" data-country="United States">
+    <div class="city">Washington, DC</div><div class="country">United States</div>
+    <svg class="clock" viewBox="0 0 240 240" role="img" aria-label="Analog clock for Washington, DC">
+      <defs><radialGradient id="face1" cx="35%" cy="25%"><stop offset="0%" stop-color="#222222"/><stop offset="100%" stop-color="#000000"/></radialGradient></defs>
+      <circle cx="120" cy="120" r="111" fill="url(#face1)" stroke="#555555" stroke-width="2"/>
+      <circle cx="120" cy="120" r="101" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+      <g class="ticks" stroke="#dddddd" stroke-linecap="round"></g>
+      <g class="numerals" fill="#ffffff" font-size="14" font-weight="650" text-anchor="middle" dominant-baseline="middle"></g>
+      <line class="hour-hand" x1="120" y1="126" x2="120" y2="69" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+      <line class="minute-hand" x1="120" y1="130" x2="120" y2="43" stroke="#eeeeee" stroke-width="4.5" stroke-linecap="round"/>
+      <line class="second-hand" x1="120" y1="143" x2="120" y2="34" stroke="#76e4d2" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="120" cy="120" r="6" fill="#76e4d2" stroke="#000000" stroke-width="2"/>
+    </svg>
+    <div class="digital">--:--:--</div><div class="date">Loading date…</div><div class="zone">America/New_York</div>
+  </section>
+
+  <section class="clock-card" data-zone="Asia/Shanghai" data-city="Beijing" data-country="China">
+    <div class="city">Beijing</div><div class="country">China</div>
+    <svg class="clock" viewBox="0 0 240 240" role="img" aria-label="Analog clock for Beijing">
+      <defs><radialGradient id="face2" cx="35%" cy="25%"><stop offset="0%" stop-color="#222222"/><stop offset="100%" stop-color="#000000"/></radialGradient></defs>
+      <circle cx="120" cy="120" r="111" fill="url(#face2)" stroke="#555555" stroke-width="2"/>
+      <circle cx="120" cy="120" r="101" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+      <g class="ticks" stroke="#dddddd" stroke-linecap="round"></g><g class="numerals" fill="#ffffff" font-size="14" font-weight="650" text-anchor="middle" dominant-baseline="middle"></g>
+      <line class="hour-hand" x1="120" y1="126" x2="120" y2="69" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><line class="minute-hand" x1="120" y1="130" x2="120" y2="43" stroke="#eeeeee" stroke-width="4.5" stroke-linecap="round"/><line class="second-hand" x1="120" y1="143" x2="120" y2="34" stroke="#76e4d2" stroke-width="1.8" stroke-linecap="round"/><circle cx="120" cy="120" r="6" fill="#76e4d2" stroke="#000000" stroke-width="2"/>
+    </svg>
+    <div class="digital">--:--:--</div><div class="date">Loading date…</div><div class="zone">Asia/Shanghai</div>
+  </section>
+
+  <section class="clock-card" data-zone="Asia/Taipei" data-city="Taipei" data-country="Taiwan">
+    <div class="city">Taipei</div><div class="country">Taiwan</div>
+    <svg class="clock" viewBox="0 0 240 240" role="img" aria-label="Analog clock for Taipei">
+      <defs><radialGradient id="face3" cx="35%" cy="25%"><stop offset="0%" stop-color="#222222"/><stop offset="100%" stop-color="#000000"/></radialGradient></defs>
+      <circle cx="120" cy="120" r="111" fill="url(#face3)" stroke="#555555" stroke-width="2"/><circle cx="120" cy="120" r="101" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+      <g class="ticks" stroke="#dddddd" stroke-linecap="round"></g><g class="numerals" fill="#ffffff" font-size="14" font-weight="650" text-anchor="middle" dominant-baseline="middle"></g>
+      <line class="hour-hand" x1="120" y1="126" x2="120" y2="69" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><line class="minute-hand" x1="120" y1="130" x2="120" y2="43" stroke="#eeeeee" stroke-width="4.5" stroke-linecap="round"/><line class="second-hand" x1="120" y1="143" x2="120" y2="34" stroke="#76e4d2" stroke-width="1.8" stroke-linecap="round"/><circle cx="120" cy="120" r="6" fill="#76e4d2" stroke="#000000" stroke-width="2"/>
+    </svg>
+    <div class="digital">--:--:--</div><div class="date">Loading date…</div><div class="zone">Asia/Taipei</div>
+  </section>
+
+  <section class="clock-card" data-zone="Pacific/Honolulu" data-city="Honolulu" data-country="Hawaii, United States">
+    <div class="city">Honolulu</div><div class="country">Hawaii, United States</div>
+    <svg class="clock" viewBox="0 0 240 240" role="img" aria-label="Analog clock for Honolulu">
+      <defs><radialGradient id="face4" cx="35%" cy="25%"><stop offset="0%" stop-color="#222222"/><stop offset="100%" stop-color="#000000"/></radialGradient></defs>
+      <circle cx="120" cy="120" r="111" fill="url(#face4)" stroke="#555555" stroke-width="2"/><circle cx="120" cy="120" r="101" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+      <g class="ticks" stroke="#dddddd" stroke-linecap="round"></g><g class="numerals" fill="#ffffff" font-size="14" font-weight="650" text-anchor="middle" dominant-baseline="middle"></g>
+      <line class="hour-hand" x1="120" y1="126" x2="120" y2="69" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><line class="minute-hand" x1="120" y1="130" x2="120" y2="43" stroke="#eeeeee" stroke-width="4.5" stroke-linecap="round"/><line class="second-hand" x1="120" y1="143" x2="120" y2="34" stroke="#76e4d2" stroke-width="1.8" stroke-linecap="round"/><circle cx="120" cy="120" r="6" fill="#76e4d2" stroke="#000000" stroke-width="2"/>
+    </svg>
+    <div class="digital">--:--:--</div><div class="date">Loading date…</div><div class="zone">Pacific/Honolulu</div>
+  </section>
+
+  <section class="clock-card" data-zone="Europe/London" data-city="London" data-country="United Kingdom">
+    <div class="city">London</div><div class="country">United Kingdom</div>
+    <svg class="clock" viewBox="0 0 240 240" role="img" aria-label="Analog clock for London">
+      <defs><radialGradient id="face5" cx="35%" cy="25%"><stop offset="0%" stop-color="#222222"/><stop offset="100%" stop-color="#000000"/></radialGradient></defs>
+      <circle cx="120" cy="120" r="111" fill="url(#face5)" stroke="#555555" stroke-width="2"/><circle cx="120" cy="120" r="101" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+      <g class="ticks" stroke="#dddddd" stroke-linecap="round"></g><g class="numerals" fill="#ffffff" font-size="14" font-weight="650" text-anchor="middle" dominant-baseline="middle"></g>
+      <line class="hour-hand" x1="120" y1="126" x2="120" y2="69" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><line class="minute-hand" x1="120" y1="130" x2="120" y2="43" stroke="#eeeeee" stroke-width="4.5" stroke-linecap="round"/><line class="second-hand" x1="120" y1="143" x2="120" y2="34" stroke="#76e4d2" stroke-width="1.8" stroke-linecap="round"/><circle cx="120" cy="120" r="6" fill="#76e4d2" stroke="#000000" stroke-width="2"/>
+    </svg>
+    <div class="digital">--:--:--</div><div class="date">Loading date…</div><div class="zone">Europe/London</div>
+  </section>
+</main>
+<footer>Time is calculated from your device clock using each city's IANA time zone. Daylight-saving changes are handled automatically.</footer>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const cards = [...document.querySelectorAll(".clock-card")];
+
+  // Draw the face markings once for every clock.
+  cards.forEach(card => {
+    const svg = card.querySelector("svg");
+    const ticks = svg.querySelector(".ticks");
+    const numerals = svg.querySelector(".numerals");
+    for (let i = 0; i < 60; i++) {
+      const angle = i * 6 * Math.PI / 180;
+      const major = i % 5 === 0;
+      const r1 = major ? 91 : 96;
+      const r2 = 103;
+      const line = document.createElementNS(NS, "line");
+      line.setAttribute("x1", 120 + Math.sin(angle) * r1);
+      line.setAttribute("y1", 120 - Math.cos(angle) * r1);
+      line.setAttribute("x2", 120 + Math.sin(angle) * r2);
+      line.setAttribute("y2", 120 - Math.cos(angle) * r2);
+      line.setAttribute("stroke-width", major ? "2.5" : "1");
+      line.setAttribute("opacity", major ? ".95" : ".55");
+      ticks.appendChild(line);
+    }
+    for (let n = 1; n <= 12; n++) {
+      const angle = n * 30 * Math.PI / 180;
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("x", 120 + Math.sin(angle) * 76);
+      t.setAttribute("y", 120 - Math.cos(angle) * 76);
+      t.textContent = n;
+      numerals.appendChild(t);
+    }
+  });
+
+  const timeFormatters = new Map();
+  const dateFormatters = new Map();
+  const partsFormatters = new Map();
+
+  function formatter(zone, options) {
+    const key = zone + JSON.stringify(options);
+    if (!timeFormatters.has(key)) {
+      timeFormatters.set(key, new Intl.DateTimeFormat("en-US", { timeZone: zone, ...options }));
+    }
+    return timeFormatters.get(key);
+  }
+
+  function update() {
+    const now = new Date();
+    cards.forEach(card => {
+      const zone = card.dataset.zone;
+      const parts = Object.fromEntries(
+        formatter(zone, { hour: "numeric", minute: "numeric", second: "numeric", hour12: false }).formatToParts(now)
+          .map(p => [p.type, p.value])
+      );
+      let hour = Number(parts.hour);
+      if (hour === 24) hour = 0;
+      const minute = Number(parts.minute);
+      const second = Number(parts.second);
+
+      const hourAngle = ((hour % 12) + minute / 60 + second / 3600) * 30;
+      const minuteAngle = (minute + second / 60) * 6;
+      const secondAngle = second * 6;
+
+      card.querySelector(".hour-hand").setAttribute("transform", `rotate(${hourAngle} 120 120)`);
+      card.querySelector(".minute-hand").setAttribute("transform", `rotate(${minuteAngle} 120 120)`);
+      card.querySelector(".second-hand").setAttribute("transform", `rotate(${secondAngle} 120 120)`);
+
+      card.querySelector(".digital").textContent = formatter(zone, {
+        hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+      }).format(now);
+
+      card.querySelector(".date").textContent = formatter(zone, {
+        weekday: "long", year: "numeric", month: "short", day: "numeric"
+      }).format(now);
+    });
+  }
+
+  update();
+  setInterval(update, 1000);
+})();
+</script>
+</body>
+</html>
